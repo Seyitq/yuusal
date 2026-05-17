@@ -1,13 +1,5 @@
-{
-    email admin@yuusal.com
-}
-
-# www → root yönlendirme
-www.yuusal.com {
-    redir https://yuusal.com{uri} permanent
-}
-
-yuusal.com {
+# TEST MODU — domain gelince yuusal.com'a çevir
+:80 {
     encode zstd gzip
 
     # Statik upload dosyaları Caddy'den direkt servis (Node'a uğramaz)
@@ -31,9 +23,8 @@ yuusal.com {
         header_up X-Forwarded-Proto {scheme}
     }
 
-    # Güvenlik header'ları
+    # Güvenlik header'ları (HSTS kaldırıldı — HTTP'de çalışmaz)
     header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains"
         X-Content-Type-Options "nosniff"
         X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
