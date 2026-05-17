@@ -1,0 +1,293 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============ KULLANICI (Sadece admin) ============
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // bcrypt hash
+  name      String?
+  role      Role     @default(EDITOR)
+  isActive  Boolean  @default(true)
+
+  blogPosts BlogPost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+// ============ KATEGORİ (Hiyerarşik) ============
+
+model Category {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  description String?
+
+  parentId String?
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryHierarchy")
+
+  imageUrl String?
+
+  products Product[]
+
+  metaTitle       String?
+  metaDescription String?
+
+  order      Int     @default(0)
+  isActive   Boolean @default(true)
+  showInMenu Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+  @@index([isActive, showInMenu])
+}
+
+// ============ KOLEKSİYON ============
+
+model Collection {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  description String?
+
+  coverImage String?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+
+  products Product[]
+
+  metaTitle       String?
+  metaDescription String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isActive, isFeatured])
+}
+
+// ============ ÜRÜN ============
+
+model Product {
+  id          String  @id @default(cuid())
+  sku         String  @unique
+  slug        String  @unique
+  name        String
+  description String? @db.Text
+  shortDesc   String?
+
+  composition String?
+  careInfo    String?
+  dimensions  String?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  collectionId String?
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+
+  variants ProductVariant[]
+  images   ProductImage[]
+  tags     ProductTag[]
+
+  metaTitle       String?
+  metaDescription String?
+
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([collectionId])
+  @@index([isActive, isFeatured])
+  @@index([sku])
+}
+
+// ============ ÜRÜN VARYANTI (Renk/Desen) ============
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  colorName String
+  colorHex  String?
+  pattern   String?
+  sku       String? @unique
+
+  images ProductImage[]
+
+  isActive Boolean @default(true)
+  order    Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
+
+// ============ ÜRÜN GÖRSELİ ============
+
+model ProductImage {
+  id String @id @default(cuid())
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  url    String
+  alt    String?
+  order  Int     @default(0)
+  isMain Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([variantId])
+}
+
+// ============ ETİKET ============
+
+model Tag {
+  id   String @id @default(cuid())
+  slug String @unique
+  name String
+  type String?
+
+  products ProductTag[]
+}
+
+model ProductTag {
+  productId String
+  tagId     String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+  @@index([tagId])
+}
+
+// ============ HERO SLIDER ============
+
+model HeroSlide {
+  id String @id @default(cuid())
+
+  title    String?
+  subtitle String?
+  ctaText  String?
+  ctaLink  String?
+
+  desktopImage String
+  mobileImage  String?
+
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+// ============ BÜLTEN ABONELERİ ============
+
+model NewsletterSubscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  isActive     Boolean  @default(true)
+  source       String?
+  subscribedAt DateTime @default(now())
+  unsubscribedAt DateTime?
+
+  @@index([isActive])
+}
+
+// ============ İLETİŞİM MESAJLARI ============
+
+model ContactMessage {
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  phone   String?
+  subject String?
+  message String  @db.Text
+
+  isRead    Boolean @default(false)
+  isReplied Boolean @default(false)
+  notes     String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// ============ BLOG ============
+
+model BlogPost {
+  id      String @id @default(cuid())
+  slug    String @unique
+  title   String
+  excerpt String?
+  content String @db.Text
+
+  coverImage String?
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+
+  metaTitle       String?
+  metaDescription String?
+
+  tags String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isPublished, publishedAt])
+}
+
+// ============ SİTE AYARLARI (Key-Value) ============
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+
+  updatedAt DateTime @updatedAt
+}

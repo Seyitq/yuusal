@@ -1,0 +1,89 @@
+import Link from "next/link";
+import { categoryService } from "@/server/services/category.service";
+import { MobileMenu } from "./mobile-menu";
+import { MessageCircle } from "lucide-react";
+
+export async function Header() {
+  const categories = await categoryService.getMenuCategories();
+
+  return (
+    <header className="sticky top-0 z-30 bg-cream-50/95 backdrop-blur-sm border-b border-cream-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Sol: Hamburger (mobil) */}
+          <div className="flex-1 flex items-center md:hidden">
+            <MobileMenu categories={categories} />
+          </div>
+
+          {/* Logo */}
+          <div className="flex-1 flex items-center justify-center md:justify-start">
+            <Link
+              href="/"
+              className="font-serif text-2xl tracking-[0.15em] text-ink-900 font-medium hover:text-taupe-500 transition-colors"
+            >
+              YUUŞAL
+            </Link>
+          </div>
+
+          {/* Desktop Nav — ortada */}
+          <nav className="hidden md:flex flex-1 justify-center items-center gap-8">
+            {categories.map((cat) => (
+              <div key={cat.id} className="relative group">
+                <Link
+                  href={`/kategori/${cat.slug}`}
+                  className="text-xs font-sans uppercase tracking-widest text-ink-700 hover:text-ink-900 py-2 transition-colors"
+                >
+                  {cat.name}
+                </Link>
+                {cat.children.length > 0 && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 hidden group-hover:block">
+                    <div className="bg-cream-50 border border-cream-200 shadow-lg rounded-sm min-w-48 py-3">
+                      <Link
+                        href={`/kategori/${cat.slug}`}
+                        className="block px-5 py-2 text-xs font-sans text-ink-500 hover:text-ink-900 hover:bg-cream-100 uppercase tracking-wider"
+                      >
+                        Tümü
+                      </Link>
+                      {cat.children.map((child) => (
+                        <Link
+                          key={child.id}
+                          href={`/kategori/${child.slug}`}
+                          className="block px-5 py-2 text-xs font-sans text-ink-500 hover:text-ink-900 hover:bg-cream-100 uppercase tracking-wider"
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+            <Link
+              href="/hakkimizda"
+              className="text-xs font-sans uppercase tracking-widest text-ink-700 hover:text-ink-900 py-2 transition-colors"
+            >
+              Hakkımızda
+            </Link>
+            <Link
+              href="/blog"
+              className="text-xs font-sans uppercase tracking-widest text-ink-700 hover:text-ink-900 py-2 transition-colors"
+            >
+              Blog
+            </Link>
+          </nav>
+
+          {/* Sağ: İletişim */}
+          <div className="flex-1 flex items-center justify-end gap-4">
+            <Link
+              href="/iletisim"
+              className="hidden md:flex items-center gap-1.5 text-xs font-sans uppercase tracking-widest text-ink-700 hover:text-ink-900 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>İletişim</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
