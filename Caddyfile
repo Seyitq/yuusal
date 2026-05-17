@@ -1,0 +1,51 @@
+{
+    email admin@yuusal.com
+}
+
+# www → root yönlendirme
+www.yuusal.com {
+    redir https://yuusal.com{uri} permanent
+}
+
+yuusal.com {
+    encode zstd gzip
+
+    # Statik upload dosyaları Caddy'den direkt servis (Node'a uğramaz)
+    handle_path /uploads/* {
+        root * /srv/uploads
+        file_server
+        header Cache-Control "public, max-age=2592000, immutable"
+    }
+
+    # Statik Next.js asset'leri — uzun cache
+    @static {
+        path /_next/static/* /favicon.ico /robots.txt /sitemap.xml
+    }
+    header @static Cache-Control "public, max-age=31536000, immutable"
+
+    # Ana site — Next.js app'e reverse proxy
+    reverse_proxy app:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    # Güvenlik header'ları
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    log {
+        output file /data/access.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+        format json
+    }
+}

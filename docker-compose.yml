@@ -1,18 +1,68 @@
-version: "3.9"
-
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
-    container_name: yuusal_db
+    container_name: yuusal-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: yuusal
-      POSTGRES_PASSWORD: yuusal_dev_pw
-      POSTGRES_DB: yuusal
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - yuusal_pgdata:/var/lib/postgresql/data
+      - /var/yuusal/db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - yuusal_net
 
-volumes:
-  yuusal_pgdata:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yuusal-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      NEXT_PUBLIC_SITE_NAME: ${NEXT_PUBLIC_SITE_NAME}
+    volumes:
+      - /var/yuusal/uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    networks:
+      - yuusal_net
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: yuusal-caddy
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /var/yuusal/caddy-data:/data
+      - /var/yuusal/caddy-config:/config
+      - /var/yuusal/uploads:/srv/uploads:ro
+    networks:
+      - yuusal_net
+
+networks:
+  yuusal_net:
+    driver: bridge

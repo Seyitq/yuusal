@@ -12,6 +12,16 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  images: {
+    formats: ["image/webp"],
+    remotePatterns: [
+      { protocol: "https", hostname: "yuusal.com" },
+    ],
+  },
+  experimental: {
+    serverActions: { bodySizeLimit: "12mb" },
+  },
   async headers() {
     return [
       {
