@@ -44,7 +44,13 @@ export const uploadService = {
   async delete(url: string): Promise<void> {
     // URL'den dosya yolunu çıkar: /uploads/products/xxx.webp
     const relativePath = url.replace(/^\//, "");
-    const absolutePath = path.join(process.cwd(), "public", relativePath);
+    const absolutePath = path.resolve(process.cwd(), "public", relativePath);
+
+    // Path traversal koruması: çözümlenmiş yolun uploads/ altında kalmasını zorla
+    const safeBase = path.resolve(process.cwd(), "public", "uploads");
+    if (!absolutePath.startsWith(safeBase + path.sep)) {
+      throw new Error("Geçersiz dosya yolu: uploads dizini dışına çıkılamaz.");
+    }
 
     try {
       await fs.unlink(absolutePath);

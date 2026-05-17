@@ -12,7 +12,13 @@ async function main() {
 
   // ============ ADMIN KULLANICI ============
   const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@yuusal.com";
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "Admin123!@#";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (!adminPassword) {
+    throw new Error(
+      "SEED_ADMIN_PASSWORD ortam değişkeni ayarlanmamış. " +
+        "Seed çalıştırmadan önce güvenli bir şifre belirleyin: export SEED_ADMIN_PASSWORD='...'",
+    );
+  }
   const adminName = process.env.SEED_ADMIN_NAME ?? "Yönetici";
 
   const hashedPassword = await bcrypt.hash(adminPassword, 12);

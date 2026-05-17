@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { blogService } from "@/server/services/blog.service";
+import { renderRichText } from "@/lib/rich-text";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -29,6 +30,8 @@ export default async function BlogPostPage({ params }: Props) {
   const post = await blogService.getBySlug(slug);
 
   if (!post || !post.isPublished) notFound();
+
+  const safeContent = renderRichText(post.content);
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
@@ -77,7 +80,7 @@ export default async function BlogPostPage({ params }: Props) {
       {/* İçerik */}
       <div
         className="prose prose-sm max-w-none font-sans text-ink-700 leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: safeContent }}
       />
 
       {/* Etiketler */}

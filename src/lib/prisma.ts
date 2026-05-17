@@ -1,3 +1,4 @@
+import "@/env"; // Sunucu başlarken ortam değişkeni validasyonu
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 

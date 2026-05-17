@@ -7,7 +7,14 @@ const slideCreateSchema = z.object({
   title: z.string().optional(),
   subtitle: z.string().optional(),
   ctaText: z.string().optional(),
-  ctaLink: z.string().optional(),
+  // javascript: ve data: URI enjeksiyonunu engelle — sadece / veya http(s) ile başlayan URL'ler
+  ctaLink: z
+    .string()
+    .optional()
+    .refine(
+      (v) => !v || v.startsWith("/") || v.startsWith("https://") || v.startsWith("http://"),
+      { message: "Geçersiz URL. '/' veya 'https://' ile başlamalıdır." },
+    ),
   desktopImage: z.string().min(1),
   mobileImage: z.string().optional(),
   order: z.number().int().default(0),

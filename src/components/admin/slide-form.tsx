@@ -57,8 +57,8 @@ function ImageField({ label, name, value, onChange, required }: {
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("category", "slides");
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    // Sunucu category'yi URL query parametresinden okur, FormData'dan değil
+    const res = await fetch("/api/upload?category=slider", { method: "POST", body: fd });
     if (res.ok) {
       const data = await res.json() as { url: string };
       onChange(data.url);

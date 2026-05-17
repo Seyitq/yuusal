@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { productService } from "@/server/services/product.service";
+import { renderRichText } from "@/lib/rich-text";
 import { ProductGallery } from "@/components/public/product-gallery";
 import { ProductVariants } from "@/components/public/product-variants";
 import { WhatsAppCTA } from "@/components/public/whatsapp-cta";
@@ -37,6 +38,8 @@ export default async function UrunPage({ params }: Props) {
   const product = await productService.getBySlug(slug);
 
   if (!product) notFound();
+
+  const safeDescription = product.description ? renderRichText(product.description) : "";
 
   // Benzer ürünler (aynı kategoriden)
   const similar = await productService
@@ -163,7 +166,7 @@ export default async function UrunPage({ params }: Props) {
           <h2 className="font-serif text-2xl text-ink-900 mb-6">Ürün Hakkında</h2>
           <div
             className="prose prose-sm max-w-none font-sans text-ink-600 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: product.description }}
+            dangerouslySetInnerHTML={{ __html: safeDescription }}
           />
         </div>
       )}

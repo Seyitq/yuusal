@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { settingService } from "@/server/services/setting.service";
+import { renderRichText } from "@/lib/rich-text";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
@@ -12,6 +13,8 @@ export default async function HakkimizdaPage() {
     settingService.get("about.content"),
   ]);
 
+  const safeAboutText = aboutText ? renderRichText(aboutText) : "";
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
       <h1 className="font-serif text-4xl md:text-5xl text-ink-900 font-light mb-10">
@@ -21,7 +24,7 @@ export default async function HakkimizdaPage() {
       {aboutText ? (
         <div
           className="prose prose-sm max-w-none font-sans text-ink-600 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: aboutText }}
+          dangerouslySetInnerHTML={{ __html: safeAboutText }}
         />
       ) : (
         <div className="space-y-6 font-sans text-sm text-ink-600 leading-relaxed">
