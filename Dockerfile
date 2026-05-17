@@ -17,8 +17,13 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-# Build zamanında DB'ye gitmesin diye dummy URL
+# Build zamanında DB'ye ve auth'a gitmesin diye dummy değerler
 ENV DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy"
+ENV NEXTAUTH_SECRET="dummy-secret-for-build-only-not-used-at-runtime"
+ENV AUTH_SECRET="dummy-secret-for-build-only-not-used-at-runtime"
+ENV NEXTAUTH_URL="http://localhost:3000"
+ENV NEXT_PUBLIC_SITE_URL="http://localhost:3000"
+ENV NEXT_PUBLIC_SITE_NAME="YUUŞAL"
 
 RUN npx prisma generate
 RUN npm run build
