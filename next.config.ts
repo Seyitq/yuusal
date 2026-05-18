@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   images: {
     formats: ["image/webp"],
+    localPatterns: [
+      { pathname: "/uploads/**" },
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "yuusal.com" },
     ],
