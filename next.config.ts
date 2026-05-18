@@ -14,6 +14,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: "standalone",
   images: {
+    unoptimized: true,
     formats: ["image/webp"],
     localPatterns: [
       { pathname: "/uploads/**" },
