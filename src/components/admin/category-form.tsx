@@ -150,7 +150,13 @@ export function CategoryForm({ defaultValues, categoryId, parentCategories }: Ca
               <FormLabel>Üst Kategori <span className="text-ink-400 font-normal">(opsiyonel)</span></FormLabel>
               <Select onValueChange={field.onChange} value={field.value ?? ""}>
                 <FormControl>
-                  <SelectTrigger><SelectValue placeholder="Ana kategori" /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Ana kategori">
+                      {field.value
+                        ? (parentCategories.find((c) => c.id === field.value)?.name ?? "Ana kategori")
+                        : "— Ana Kategori —"}
+                    </SelectValue>
+                  </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="">— Ana Kategori —</SelectItem>
