@@ -151,11 +151,11 @@ export function CategoryForm({ defaultValues, categoryId, parentCategories }: Ca
               <Select onValueChange={field.onChange} value={field.value ?? ""}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Ana kategori">
+                    <span className="truncate">
                       {field.value
-                        ? (parentCategories.find((c) => c.id === field.value)?.name ?? "Ana kategori")
-                        : "— Ana Kategori —"}
-                    </SelectValue>
+                        ? (parentCategories.find((c) => c.id === field.value)?.name ?? field.value)
+                        : <span className="text-muted-foreground">— Ana Kategori —</span>}
+                    </span>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

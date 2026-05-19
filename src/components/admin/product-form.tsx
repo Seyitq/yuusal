@@ -216,9 +216,11 @@ export function ProductForm({
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Kategori seçin">
-                          {categories.find((c) => c.id === field.value)?.name ?? "Kategori seçin"}
-                        </SelectValue>
+                        <span className="truncate">
+                          {field.value
+                            ? (categories.find((c) => c.id === field.value)?.name ?? field.value)
+                            : <span className="text-muted-foreground">Kategori seçin</span>}
+                        </span>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -240,11 +242,11 @@ export function ProductForm({
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Koleksiyon seçin (opsiyonel)">
+                        <span className="truncate">
                           {field.value
-                            ? (collections.find((c) => c.id === field.value)?.name ?? "Koleksiyon seçin")
-                            : "— Yok —"}
-                        </SelectValue>
+                            ? (collections.find((c) => c.id === field.value)?.name ?? field.value)
+                            : <span className="text-muted-foreground">— Yok —</span>}
+                        </span>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
