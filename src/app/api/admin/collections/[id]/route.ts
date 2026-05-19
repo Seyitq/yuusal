@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { collectionService } from "@/server/services/collection.service";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const collectionUpdateSchema = z.object({
@@ -32,6 +33,9 @@ export async function PATCH(
 
   try {
     const collection = await collectionService.update(id, parsed.data);
+    // Anasayfa ve koleksiyon sayfalarının cache'ini temizle
+    revalidatePath("/");
+    revalidatePath(`/koleksiyon/${collection.slug}`);
     return NextResponse.json(collection);
   } catch (error) {
     console.error("Koleksiyon güncelleme hatası:", error);

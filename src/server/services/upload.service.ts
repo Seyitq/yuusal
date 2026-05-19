@@ -9,7 +9,7 @@ const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_DIMENSION = 2000;
 
-type UploadCategory = "products" | "slider" | "general" | "blog";
+type UploadCategory = "products" | "slider" | "general" | "blog" | "collections";
 
 export const uploadService = {
   async processAndSave(
