@@ -148,7 +148,7 @@ export function CategoryForm({ defaultValues, categoryId, parentCategories }: Ca
           render={({ field }) => (
             <FormItem>
               <FormLabel>Üst Kategori <span className="text-ink-400 font-normal">(opsiyonel)</span></FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value ?? ""}>
+              <Select onValueChange={field.onChange} value={field.value ?? ""}>
                 <FormControl>
                   <SelectTrigger><SelectValue placeholder="Ana kategori" /></SelectTrigger>
                 </FormControl>

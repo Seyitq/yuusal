@@ -104,28 +104,63 @@ export const productService = {
   },
 
   async create(input: ProductCreateInput) {
-    const slug = input.slug ?? (await generateUniqueSlug(
-      input.name,
+    const { categoryId, collectionId, images, ...rest } = input;
+    const slug = rest.slug ?? (await generateUniqueSlug(
+      rest.name,
       async (s) => (await prisma.product.count({ where: { slug: s } })) > 0,
     ));
 
     return productRepository.create({
-      ...input,
+      ...rest,
       slug,
-      category: { connect: { id: input.categoryId } },
-      ...(input.collectionId && { collection: { connect: { id: input.collectionId } } }),
+      category: { connect: { id: categoryId } },
+      ...(collectionId && { collection: { connect: { id: collectionId } } }),
+      ...(images && images.length > 0 && {
+        images: {
+          create: images.map((img, i) => ({
+            url: img.url,
+            alt: img.alt ?? "",
+            order: img.order ?? i,
+            isMain: img.isPrimary ?? i === 0,
+          })),
+        },
+      }),
     });
   },
 
   async update(id: string, input: ProductUpdateInput) {
-    return productRepository.update(id, {
-      ...input,
-      ...(input.categoryId && { category: { connect: { id: input.categoryId } } }),
-      ...(input.collectionId !== undefined && {
-        collection: input.collectionId
-          ? { connect: { id: input.collectionId } }
-          : { disconnect: true },
-      }),
+    const { categoryId, collectionId, images, ...rest } = input;
+
+    return prisma.$transaction(async (tx) => {
+      const product = await tx.product.update({
+        where: { id },
+        data: {
+          ...rest,
+          ...(categoryId !== undefined && { category: { connect: { id: categoryId } } }),
+          ...(collectionId !== undefined && {
+            collection: collectionId
+              ? { connect: { id: collectionId } }
+              : { disconnect: true },
+          }),
+        },
+      });
+
+      if (images !== undefined) {
+        await tx.productImage.deleteMany({ where: { productId: id } });
+        if (images.length > 0) {
+          await tx.productImage.createMany({
+            data: images.map((img, i) => ({
+              productId: id,
+              url: img.url,
+              alt: img.alt ?? "",
+              order: img.order ?? i,
+              isMain: img.isPrimary ?? i === 0,
+            })),
+          });
+        }
+      }
+
+      return product;
     });
   },
 
