@@ -5,7 +5,7 @@ export const categoryCreateSchema = z.object({
   name: z.string().min(2).max(100),
   description: z.string().optional(),
   parentId: z.string().cuid().optional().nullable(),
-  imageUrl: z.string().url().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
   metaTitle: z.string().max(70).optional(),
   metaDescription: z.string().max(160).optional(),
   order: z.number().int().default(0),
