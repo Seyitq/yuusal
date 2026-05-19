@@ -23,10 +23,10 @@ export async function Footer() {
 
   return (
     <footer className="bg-ink-900 text-cream-300 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {/* Marka */}
-          <div className="md:col-span-1">
+          <div className="col-span-2 md:col-span-1">
             <Link href="/" className="font-serif text-2xl tracking-[0.15em] text-cream-100 font-medium">
               {siteName || "YUUŞAL"}
             </Link>
@@ -49,10 +49,10 @@ export async function Footer() {
 
           {/* Kategoriler */}
           <div>
-            <h3 className="text-xs font-sans uppercase tracking-widest text-cream-200 mb-6">
+            <h3 className="text-xs font-sans uppercase tracking-widest text-cream-200 mb-4 md:mb-6">
               Koleksiyonlar
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2 md:space-y-3">
               {categories.slice(0, 6).map((cat) => (
                 <li key={cat.id}>
                   <Link
@@ -68,10 +68,10 @@ export async function Footer() {
 
           {/* Kurumsal */}
           <div>
-            <h3 className="text-xs font-sans uppercase tracking-widest text-cream-200 mb-6">
+            <h3 className="text-xs font-sans uppercase tracking-widest text-cream-200 mb-4 md:mb-6">
               Kurumsal
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2 md:space-y-3">
               <li>
                 <Link href="/hakkimizda" className="text-sm font-sans text-ink-300 hover:text-cream-100 transition-colors">
                   Hakkımızda
@@ -107,10 +107,10 @@ export async function Footer() {
 
           {/* İletişim */}
           <div>
-            <h3 className="text-xs font-sans uppercase tracking-widest text-cream-200 mb-6">
+            <h3 className="text-xs font-sans uppercase tracking-widest text-cream-200 mb-4 md:mb-6">
               İletişim
             </h3>
-            <ul className="space-y-3 text-sm font-sans text-ink-300">
+            <ul className="space-y-2 md:space-y-3 text-sm font-sans text-ink-300">
               {email && <li>{email}</li>}
               {phone && <li>{phone}</li>}
               {address && (
@@ -120,7 +120,7 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-ink-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-10 md:mt-16 pt-8 border-t border-ink-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs font-sans text-ink-500">
             © {year} {siteName || "YUUŞAL"}. Tüm hakları saklıdır.
           </p>

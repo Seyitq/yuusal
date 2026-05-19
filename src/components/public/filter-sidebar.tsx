@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { useCallback, useState } from "react";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
 type Collection = { id: string; slug: string; name: string };
 
@@ -21,6 +21,7 @@ export function FilterSidebar({ collections }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentSort = searchParams.get("siralama") ?? "newest";
   const currentCollection = searchParams.get("koleksiyon") ?? "";
@@ -39,15 +40,10 @@ export function FilterSidebar({ collections }: Props) {
     [router, pathname, searchParams],
   );
 
-  return (
-    <aside className="w-full md:w-56 flex-shrink-0">
-      <div className="flex items-center gap-2 mb-6">
-        <SlidersHorizontal className="h-4 w-4 text-ink-500" />
-        <span className="font-sans text-xs uppercase tracking-widest text-ink-700">Filtrele</span>
-      </div>
-
+  const filterContent = (
+    <>
       {/* Sıralama */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h3 className="font-sans text-xs uppercase tracking-widest text-ink-500 mb-3">Sıralama</h3>
         <ul className="space-y-2">
           {SORT_OPTIONS.map((opt) => (
@@ -69,7 +65,7 @@ export function FilterSidebar({ collections }: Props) {
 
       {/* Koleksiyon Filtresi */}
       {collections.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-6">
           <h3 className="font-sans text-xs uppercase tracking-widest text-ink-500 mb-3">
             Koleksiyon
           </h3>
@@ -101,6 +97,35 @@ export function FilterSidebar({ collections }: Props) {
           </ul>
         </div>
       )}
+    </>
+  );
+
+  return (
+    <aside className="w-full md:w-56 flex-shrink-0">
+      {/* Mobil toggle */}
+      <button
+        onClick={() => setMobileOpen((v) => !v)}
+        className="md:hidden flex items-center justify-between w-full border border-cream-200 px-4 py-3 mb-4"
+      >
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4 text-ink-500" />
+          <span className="font-sans text-xs uppercase tracking-widest text-ink-700">Filtrele / Sırala</span>
+        </div>
+        <ChevronDown
+          className={`h-4 w-4 text-ink-500 transition-transform ${mobileOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {/* Masaüstü başlık */}
+      <div className="hidden md:flex items-center gap-2 mb-6">
+        <SlidersHorizontal className="h-4 w-4 text-ink-500" />
+        <span className="font-sans text-xs uppercase tracking-widest text-ink-700">Filtrele</span>
+      </div>
+
+      {/* İçerik — mobilde toggle ile göster/gizle */}
+      <div className={`${mobileOpen ? "block" : "hidden"} md:block`}>
+        {filterContent}
+      </div>
     </aside>
   );
 }

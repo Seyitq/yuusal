@@ -39,6 +39,7 @@ export default async function KoleksiyonDuzenlePage({
           name: collection.name,
           slug: collection.slug,
           description: collection.description ?? "",
+          coverImage: collection.coverImage ?? "",
           metaTitle: collection.metaTitle ?? "",
           metaDescription: collection.metaDescription ?? "",
           isActive: collection.isActive,

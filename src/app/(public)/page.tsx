@@ -126,7 +126,7 @@ export default async function HomePage() {
       {/* Koleksiyon Banner */}
       {featuredCollection && (
         <section className="relative overflow-hidden">
-          <div className="relative aspect-[3/1] md:aspect-[4/1] bg-cream-200">
+        <div className="relative aspect-[4/3] sm:aspect-[2/1] md:aspect-[4/1] bg-cream-200">
             {featuredCollection.coverImage && (
               <Image
                 src={featuredCollection.coverImage}

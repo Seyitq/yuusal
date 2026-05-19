@@ -19,11 +19,19 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// ImageUploader client-only
+const ImageUploader = dynamic(
+  () => import("@/components/admin/image-uploader").then((m) => m.ImageUploader),
+  { ssr: false }
+);
 
 const formSchema = z.object({
   name: z.string().min(2, "Koleksiyon adı en az 2 karakter olmalı").max(200),
   slug: z.string().regex(/^[a-z0-9-]+$/, "Sadece küçük harf, rakam ve tire").optional().or(z.literal("")),
   description: z.string().optional(),
+  coverImage: z.string().optional().or(z.literal("")),
   metaTitle: z.string().max(70).optional(),
   metaDescription: z.string().max(160).optional(),
   isActive: z.boolean(),
@@ -47,6 +55,7 @@ export function CollectionForm({ defaultValues, collectionId }: CollectionFormPr
       name: "",
       slug: "",
       description: "",
+      coverImage: "",
       metaTitle: "",
       metaDescription: "",
       isActive: true,
@@ -83,6 +92,26 @@ export function CollectionForm({ defaultValues, collectionId }: CollectionFormPr
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Kapak Görseli */}
+        <FormField
+          control={form.control}
+          name="coverImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Kapak Görseli</FormLabel>
+              <FormControl>
+                <ImageUploader
+                  value={field.value ? [{ url: field.value, alt: form.watch("name") || "" }] : []}
+                  onChange={(imgs) => field.onChange(imgs[0]?.url ?? "")}
+                  maxFiles={1}
+                  category="collections"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}

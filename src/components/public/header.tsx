@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { categoryService } from "@/server/services/category.service";
+import { settingService } from "@/server/services/setting.service";
 import { MobileMenu } from "./mobile-menu";
 import { MessageCircle } from "lucide-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export async function Header() {
-  const categories = await categoryService.getMenuCategories();
+  const [categories, phone, template] = await Promise.all([
+    categoryService.getMenuCategories(),
+    settingService.get("contact.phone"),
+    settingService.get("whatsapp.messageTemplate"),
+  ]);
+
+  const whatsappUrl = phone
+    ? buildWhatsAppUrl({ phoneNumber: phone, template: template ?? "Merhaba, bilgi almak istiyorum." })
+    : null;
 
   return (
     <header className="sticky top-0 z-30 bg-cream-50/95 backdrop-blur-sm border-b border-cream-200">
@@ -74,6 +84,7 @@ export async function Header() {
 
           {/* Sağ: İletişim */}
           <div className="flex-1 flex items-center justify-end gap-4">
+            {/* Masaüstü iletişim linki */}
             <Link
               href="/iletisim"
               className="hidden md:flex items-center gap-1.5 text-xs font-sans uppercase tracking-widest text-ink-700 hover:text-ink-900 transition-colors"
@@ -81,6 +92,18 @@ export async function Header() {
               <MessageCircle className="h-4 w-4" />
               <span>İletişim</span>
             </Link>
+            {/* Mobil WhatsApp hızlı erişim */}
+            {phone && whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="md:hidden flex items-center justify-center w-9 h-9 text-ink-700 hover:text-green-600 transition-colors"
+                aria-label="WhatsApp ile iletişim"
+              >
+                <MessageCircle className="h-5 w-5" />
+              </a>
+            )}
           </div>
         </div>
       </div>

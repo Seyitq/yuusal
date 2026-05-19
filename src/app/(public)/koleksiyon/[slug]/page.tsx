@@ -49,7 +49,7 @@ export default async function KoleksiyonPage({ params, searchParams }: Props) {
   return (
     <div>
       {/* Hero Banner */}
-      <div className="relative aspect-[21/7] overflow-hidden bg-cream-200">
+      <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/7] overflow-hidden bg-cream-200">
         {collection.coverImage && (
           <Image
             src={collection.coverImage}
