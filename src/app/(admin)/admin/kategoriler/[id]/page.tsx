@@ -43,6 +43,7 @@ export default async function KategoriDuzenlePage({
           slug: category.slug,
           description: category.description ?? "",
           parentId: category.parentId ?? "",
+          imageUrl: category.imageUrl ?? "",
           metaTitle: category.metaTitle ?? "",
           metaDescription: category.metaDescription ?? "",
           order: category.order,

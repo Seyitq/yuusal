@@ -26,12 +26,14 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 const formSchema = z.object({
   name: z.string().min(2, "Kategori adı en az 2 karakter olmalı").max(100),
   slug: z.string().regex(/^[a-z0-9-]+$/, "Sadece küçük harf, rakam ve tire").optional().or(z.literal("")),
   description: z.string().optional(),
   parentId: z.string().optional(),
+  imageUrl: z.string().optional(),
   metaTitle: z.string().max(70).optional(),
   metaDescription: z.string().max(160).optional(),
   order: z.number().int(),
@@ -60,6 +62,7 @@ export function CategoryForm({ defaultValues, categoryId, parentCategories }: Ca
       slug: "",
       description: "",
       parentId: "",
+      imageUrl: "",
       metaTitle: "",
       metaDescription: "",
       order: 0,
@@ -74,6 +77,7 @@ export function CategoryForm({ defaultValues, categoryId, parentCategories }: Ca
       ...values,
       slug: values.slug || undefined,
       parentId: values.parentId || null,
+      imageUrl: values.imageUrl || null,
     };
 
     const url = isEditing
@@ -157,6 +161,25 @@ export function CategoryForm({ defaultValues, categoryId, parentCategories }: Ca
                     ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Kategori Görseli</FormLabel>
+              <FormControl>
+                <ImageUploader
+                  value={field.value ? [{ url: field.value, alt: form.getValues("name") }] : []}
+                  onChange={(imgs) => field.onChange(imgs[0]?.url ?? "")}
+                  maxFiles={1}
+                  category="categories"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

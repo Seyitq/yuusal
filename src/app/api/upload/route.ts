@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { uploadService } from "@/server/services/upload.service";
 import { z } from "zod";
 
-const categorySchema = z.enum(["products", "slider", "general", "blog", "collections"]);
+const categorySchema = z.enum(["products", "slider", "general", "blog", "collections", "categories"]);
 
 export async function POST(req: Request) {
   const session = await auth();
