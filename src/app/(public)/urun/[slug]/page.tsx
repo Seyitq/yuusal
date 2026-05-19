@@ -7,6 +7,7 @@ import { ProductVariants } from "@/components/public/product-variants";
 import { WhatsAppCTA } from "@/components/public/whatsapp-cta";
 import { ProductGrid } from "@/components/public/product-grid";
 import { buildProductLd, buildBreadcrumbLd } from "@/lib/json-ld";
+import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
 export const revalidate = 300;
@@ -99,6 +100,25 @@ export default async function UrunPage({ params }: Props) {
               Ürün Kodu: {product.sku}
             </p>
           </div>
+
+          {/* Fiyat */}
+          {product.price != null && (
+            <div className="flex items-baseline gap-3">
+              <span className="font-serif text-2xl text-ink-900">
+                {formatPrice(product.price)}
+              </span>
+              {product.priceOld != null && (
+                <span className="font-sans text-base text-ink-400 line-through">
+                  {formatPrice(product.priceOld)}
+                </span>
+              )}
+              {product.priceOld != null && (
+                <span className="font-sans text-xs text-cream-50 bg-bronze px-2 py-0.5">
+                  %{Math.round((1 - product.price / product.priceOld) * 100)} İndirim
+                </span>
+              )}
+            </div>
+          )}
 
           {product.shortDesc && (
             <p className="font-sans text-sm text-ink-600 leading-relaxed">{product.shortDesc}</p>

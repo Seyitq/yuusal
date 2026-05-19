@@ -63,6 +63,9 @@ export default async function UrunDuzenlePage({
           metaTitle: product.metaTitle ?? "",
           metaDescription: product.metaDescription ?? "",
           order: product.order,
+          // Kuru\u015f \u2192 T\u20ba \u00e7evirimi (form T\u20ba g\u00f6steriyor)
+          price: product.price != null ? product.price / 100 : undefined,
+          priceOld: product.priceOld != null ? product.priceOld / 100 : undefined,
         }}
         images={initialImages}
         categories={categories.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name }))}

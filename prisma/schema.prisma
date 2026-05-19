@@ -100,6 +100,9 @@ model Product {
   careInfo    String?
   dimensions  String?
 
+  price    Int?  // Fiyat (kuruş cinsinden — 29900 = 299₺)
+  priceOld Int?  // İndirim öncesi fiyat (kuruş cinsinden)
+
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 

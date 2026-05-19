@@ -1,11 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
 
 type Product = {
   id: string;
   slug: string;
   name: string;
   sku: string;
+  price?: number | null;
+  priceOld?: number | null;
   shortDesc?: string | null;
   images: { url: string; alt?: string | null; isMain: boolean }[];
   category: { name: string; slug: string };
@@ -17,6 +20,13 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/urun/${product.slug}`} className="group block">
       <div className="relative aspect-square overflow-hidden bg-cream-100">
+        {product.price != null && product.priceOld != null && (
+          <div className="absolute top-2 left-2 z-10 bg-bronze px-2 py-0.5">
+            <span className="font-sans text-xs text-cream-50 font-medium">
+              %{Math.round((1 - product.price / product.priceOld) * 100)} İndirim
+            </span>
+          </div>
+        )}
         {image ? (
           <Image
             src={image.url}
@@ -38,7 +48,20 @@ export function ProductCard({ product }: { product: Product }) {
         <h3 className="font-sans text-sm text-ink-900 font-medium leading-snug group-hover:text-taupe-500 transition-colors">
           {product.name}
         </h3>
-        <p className="text-xs font-sans text-ink-300">{product.sku}</p>
+        {product.price != null ? (
+          <div className="flex items-center gap-2">
+            <span className="font-sans text-sm font-semibold text-ink-900">
+              {formatPrice(product.price)}
+            </span>
+            {product.priceOld != null && (
+              <span className="font-sans text-xs text-ink-400 line-through">
+                {formatPrice(product.priceOld)}
+              </span>
+            )}
+          </div>
+        ) : (
+          <p className="text-xs font-sans text-ink-300">{product.sku}</p>
+        )}
       </div>
     </Link>
   );

@@ -23,6 +23,8 @@ export const productCreateSchema = z.object({
   metaTitle: z.string().max(70).optional(),
   metaDescription: z.string().max(160).optional(),
   order: z.number().int().default(0),
+  price: z.number().int().min(0).optional().nullable(),
+  priceOld: z.number().int().min(0).optional().nullable(),
   images: z.array(productImageInputSchema).optional(),
 });
 

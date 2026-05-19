@@ -45,6 +45,9 @@ const formSchema = z.object({
   metaTitle: z.string().max(70).optional(),
   metaDescription: z.string().max(160).optional(),
   order: z.number().int(),
+  // Fiyat: form’da T₺ cinsinden girilir (e.g. 299), API’ye kuruş olarak gönderilir (* 100)
+  price: z.number().min(0).optional(),
+  priceOld: z.number().min(0).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -89,6 +92,8 @@ export function ProductForm({
       metaTitle: "",
       metaDescription: "",
       order: 0,
+      price: undefined,
+      priceOld: undefined,
       ...defaultValues,
     },
   });
@@ -98,6 +103,9 @@ export function ProductForm({
       ...values,
       slug: values.slug || undefined,
       collectionId: values.collectionId || null,
+      // Kuruş'a çevir: form T₺ giriyor, API kuruş bekliyor
+      price: values.price != null && values.price > 0 ? Math.round(values.price * 100) : null,
+      priceOld: values.priceOld != null && values.priceOld > 0 ? Math.round(values.priceOld * 100) : null,
       images: images.map((img, i) => ({ ...img, order: i, isPrimary: i === 0 })),
     };
 
@@ -256,6 +264,66 @@ export function ProductForm({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Fiyat */}
+        <div className="space-y-4">
+          <h2 className="text-base font-semibold text-ink-900">Fiyat</h2>
+          <p className="text-xs text-ink-400 -mt-2">Türk Lirası cinsinden girin. İndirim varsa her iki alanı da doldurun.</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fiyat (₺)</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="299"
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value === "" ? undefined : e.target.valueAsNumber)}
+                        className="pr-8"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-ink-400">₺</span>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="priceOld"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>İndirim Öncesi Fiyat (₺) <span className="text-ink-400 font-normal">— opsiyonel</span></FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="399"
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value === "" ? undefined : e.target.valueAsNumber)}
+                        className="pr-8"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-ink-400">₺</span>
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
