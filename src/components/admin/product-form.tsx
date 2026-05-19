@@ -213,7 +213,7 @@ export function ProductForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Kategori *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? "">
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder="Kategori seçin" /></SelectTrigger>
                     </FormControl>
@@ -233,7 +233,7 @@ export function ProductForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Koleksiyon</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? "">
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder="Koleksiyon seçin (opsiyonel)" /></SelectTrigger>
                     </FormControl>
