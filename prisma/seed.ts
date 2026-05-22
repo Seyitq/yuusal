@@ -48,7 +48,7 @@ async function main() {
     { key: "social.tiktok", value: "" },
     { key: "site.name", value: "YUUŞAL" },
     { key: "site.tagline", value: "Zarafetin Yumuşak Hali" },
-    { key: "site.logo", value: "/uploads/general/logo.svg" },
+    { key: "site.logo", value: "/logo.png" },
     { key: "site.favicon", value: "/favicon.ico" },
     { key: "announcementBar.messages", value: JSON.stringify(["14 gün iade ve değişim", "Türkiye geneli kargo", "Doğal ipek koleksiyonu"]) },
     { key: "announcementBar.isActive", value: "true" },

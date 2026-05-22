@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { categoryService } from "@/server/services/category.service";
 import { settingService } from "@/server/services/setting.service";
 import { MobileMenu } from "./mobile-menu";
@@ -27,11 +28,15 @@ export async function Header() {
 
           {/* Logo */}
           <div className="flex-1 flex items-center justify-center md:justify-start">
-            <Link
-              href="/"
-              className="font-serif text-2xl tracking-[0.15em] text-ink-900 font-medium hover:text-taupe-500 transition-colors"
-            >
-              YUUŞAL
+            <Link href="/" className="block hover:opacity-80 transition-opacity">
+              <Image
+                src="/logo.png"
+                alt="YUUŞAL"
+                width={140}
+                height={48}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </Link>
           </div>
 
