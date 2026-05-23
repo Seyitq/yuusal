@@ -1,6 +1,10 @@
-# TEST MODU — domain gelince yuusal.com'a çevir
-:80 {
+# yuusal.com — Caddy otomatik Let's Encrypt SSL alır
+yuusal.com, www.yuusal.com {
     encode zstd gzip
+
+    # www → apex yönlendirmesi
+    @www host www.yuusal.com
+    redir @www https://yuusal.com{uri} permanent
 
     # Statik upload dosyaları Caddy'den direkt servis (Node'a uğramaz)
     handle_path /uploads/* {
@@ -23,8 +27,9 @@
         header_up X-Forwarded-Proto {scheme}
     }
 
-    # Güvenlik header'ları (HSTS kaldırıldı — HTTP'de çalışmaz)
+    # Güvenlik header'ları
     header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
         X-Content-Type-Options "nosniff"
         X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
